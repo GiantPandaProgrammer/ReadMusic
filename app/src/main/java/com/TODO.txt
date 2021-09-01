@@ -3,6 +3,13 @@ Go back and forth in code
     Ctrl + [ or Ctrl + ]
 
 
+# DDR mode
+
+# play sound
+# leave trail of red and green
+# Midi song to trail
+# scrollable multiple lines of staffs?
+# clean up unused code. Letter ?
 
 - Both at the same time
 - Test out sharps

@@ -42,10 +42,10 @@ public class MainActivity extends AppCompatActivity {
         canvas.SetBass();
     }
 
-    public void ShowHint(View view) {
-        CanvasView canvas = (CanvasView) findViewById(R.id.signature_canvas);
-        canvas.ShowHint();
-    }
+    // public void ShowHint(View view) {
+    //    CanvasView canvas = (CanvasView) findViewById(R.id.signature_canvas);
+    //    canvas.ShowHint();
+    //}
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

@@ -12,6 +12,7 @@ public class NoteOnDisplay {
     private int yPos;
     private boolean isBlackKey;
     private int keyDelta;
+    public NoteColor color;
 
     public int GetDelta() {
         return this.noteDelta;
@@ -26,6 +27,7 @@ public class NoteOnDisplay {
         this.letter = letter;
         this.noteDelta = noteDelta;
         this.isSharp = isSharp;
+        this.color = NoteColor.BLACK;
     }
 
     public int getNoteValue() {
