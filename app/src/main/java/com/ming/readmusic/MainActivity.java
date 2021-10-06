@@ -42,10 +42,10 @@ public class MainActivity extends AppCompatActivity {
         canvas.SetBass();
     }
 
-    // public void ShowHint(View view) {
-    //    CanvasView canvas = (CanvasView) findViewById(R.id.signature_canvas);
-    //    canvas.ShowHint();
-    //}
+    public void ShowHint(View view) {
+        CanvasView canvas = (CanvasView) findViewById(R.id.signature_canvas);
+        canvas.ShowHint();
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -57,9 +57,8 @@ public class MainActivity extends AppCompatActivity {
             case R.id.bass_action:
                 canvas.SetBass();
                 return true;
-            case R.id.note_letter_action:
-                canvas.ShowHint();
-                return true;
+            case R.id.both_action:
+                canvas.SetBass();
             default:
                 // If we got here, the user's action was not recognized.
                 // Invoke the superclass to handle it.

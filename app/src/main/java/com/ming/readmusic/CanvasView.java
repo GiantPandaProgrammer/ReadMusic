@@ -34,14 +34,14 @@ public class CanvasView extends View {
     private int spaceBetweenLines = 30;
     private int spaceBetweenHalfNotes = spaceBetweenLines / 2;
     private int noteSpace;
-    private int notesPerLine;
+    private int notesPerLine = 10;
     private int marginTop = 100;
     private Clef clef = Clef.Treble;
     private int numOfNotes = 10; // TODO: Enough for one line?
     private NoteMode noteMode = NoteMode.Note;
     private int spaceBetweenClefs = 60;
     private int middleCstartX = 800;
-    private int middleCstartY = 400;
+    private int middleCstartY = 500;
     private int white_key_width = 50;
     private int black_key_width = 25;
     private int white_key_height = 200;
@@ -49,12 +49,10 @@ public class CanvasView extends View {
     private double currentTick = 480;
 
     private Drawer drawer;
-    //private double currentBeatNum;
-    //private int currentLineNum;
     private boolean showHint = false;
 
     private int clickBoxWidth = spaceBetweenBeats;
-    private int clickBoxHeight = 260;
+    private int clickBoxHeight = 600;
 
     public CanvasView(Context c, AttributeSet attrs) {
         super(c, attrs);
@@ -70,7 +68,6 @@ public class CanvasView extends View {
         mPaint.setStyle(Paint.Style.STROKE);
         mPaint.setStrokeJoin(Paint.Join.ROUND);
         mPaint.setStrokeWidth(4f);
-
 
 /*        InputStream stream;
 
@@ -105,7 +102,7 @@ public class CanvasView extends View {
         CalNoteSpaces(mCanvas);
     }
 
-    // override onDraw
+    // Draw the keyboard and notes
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
@@ -124,12 +121,15 @@ public class CanvasView extends View {
 
         if (showHint)
         {
-            drawer.DrawSelectedKeyboardNote(canvas, this.currentTick);
+            drawer.DrawSelectedKeyboardNote(canvas, this.currentTick, notes);
         }
 
         drawer.DrawKeyboard(canvas);
+
+        DrawBoundingBox(canvas);
     }
 
+    // Gets the line number?
     private int GetNumClefs(Canvas canvas) {
         if (notes.size() == 0) { return 1; }
 
@@ -143,6 +143,7 @@ public class CanvasView extends View {
     private void CalNoteSpaces(Canvas canvas) {
         noteSpace = canvas.getWidth() - (lineSideMargins * 2) - clefWidth - (noteSideMargins * 2);
         notesPerLine = (int) Math.ceil((double) noteSpace / spaceBetweenBeats);
+        drawer.SetNotesPerLine(notesPerLine);
     }
 
     public void SetTreble() {
@@ -152,7 +153,14 @@ public class CanvasView extends View {
     }
 
     public void SetBass() {
+        // Can be removed?
         clef = Clef.Bass;
+        this.notes = MidiReader.GenerateRandomNoteDisplays(numOfNotes, clef);
+        this.invalidate();
+    }
+
+    public void SetBoth() {
+        clef = Clef.Both;
         this.notes = MidiReader.GenerateRandomNoteDisplays(numOfNotes, clef);
         this.invalidate();
     }
@@ -164,6 +172,7 @@ public class CanvasView extends View {
 
     public boolean isPressed = false;
 
+    // Check if the note selected is the correct note. And move onto next note.
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_UP) {
@@ -186,29 +195,55 @@ public class CanvasView extends View {
             {
                 this.currentTick = noteTick;
                 this.invalidate();
-            }
 
-            if (isClickOnSelectNote(x, y))
-            {
                 int noteIndex = (int) this.currentTick / 480;
-                NoteOnDisplay currentNote = this.notes.get(noteIndex);
-                currentNote.color = NoteColor.GREEN;
-                this.notes.set(noteIndex, currentNote);
-
-                this.currentTick = this.currentTick + 480;
-
-                if (this.currentTick == numOfNotes * 480) {
-                    this.notes = MidiReader.GenerateRandomNoteDisplays(numOfNotes, clef);
-                    this.currentTick = 0;
-                }
-
-                this.showHint = false;
-                this.invalidate();
-                break;
+                markPriorNotesAsBlack(noteIndex);
             }
         }
 
+        if (isClickOnKeyboard(x, y)) {
+
+            int noteIndex = (int) this.currentTick / 480;
+            NoteOnDisplay currentNote = this.notes.get(noteIndex);
+
+            if (isClickOnSelectNote(x, y)) {
+                currentNote.color = NoteColor.GREEN;
+            } else {
+                currentNote.color = NoteColor.RED;
+            }
+
+            this.notes.set(noteIndex, currentNote);
+
+            this.currentTick = this.currentTick + 480;
+
+            if (this.currentTick == numOfNotes * 480) {
+                this.notes = MidiReader.GenerateRandomNoteDisplays(numOfNotes, clef);
+                this.currentTick = 0;
+            }
+
+            this.showHint = false;
+            this.invalidate();
+        }
+
         return true;
+    }
+
+    private void markPriorNotesAsBlack(int index) {
+        for (int i = 0; i < notes.size(); i++) {
+            if (i >= index) {
+                NoteOnDisplay note = notes.get(i);
+                note.color = NoteColor.BLACK;
+                notes.set(i, note);
+            }
+        }
+    }
+
+    private boolean isClickOnKeyboard(float clickX, float clickY) {
+        int keyboardStartX = middleCstartX + - 2 * 7  * white_key_width;
+        int keyboardEndX = middleCstartX + 3 * 7 * white_key_width;
+        int keyboardStartY = middleCstartY;
+        int keyboardEndY = middleCstartY + white_key_height;
+        return keyboardStartX < clickX && clickX < keyboardEndX && keyboardStartY < clickY && clickY < keyboardEndY;
     }
 
     private boolean isClickOnSelectNote(float clickX, float clickY) {
@@ -243,8 +278,7 @@ public class CanvasView extends View {
         return false;
     }
 
-    // Unused Code
-  /*  private void DrawBoundingBox(Canvas canvas) {
+  private void DrawBoundingBox(Canvas canvas) {
         Paint boxPaint = new Paint();
         boxPaint.setColor(Color.BLACK);
         boxPaint.setStyle(Paint.Style.STROKE);
@@ -258,5 +292,5 @@ public class CanvasView extends View {
             canvas.drawRect(xPos - clickBoxWidth / 2, middleY - clickBoxHeight / 2, xPos + clickBoxWidth / 2, middleY + clickBoxHeight / 2, boxPaint);
         }
 
-    }*/
+    }
 }

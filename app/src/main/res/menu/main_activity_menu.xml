@@ -9,7 +9,8 @@
         android:title="Bass Staff Notes"
         app:showAsAction="collapseActionView" />
 
-    <item android:id="@+id/note_letter_action"
-        android:title="Display Note / Letter"
+    <item android:id="@+id/both_action"
+        android:title="Both Staff Notes"
         app:showAsAction="collapseActionView" />
+
 </menu>

@@ -3,18 +3,22 @@ Go back and forth in code
     Ctrl + [ or Ctrl + ]
 
 
-# DDR mode
 
+# Constants file
 # play sound
-# leave trail of red and green
 # Midi song to trail
 # scrollable multiple lines of staffs?
-# clean up unused code. Letter ?
+# Bass always have short line but treble has it only when needed?
 
+- Fix box for selecting note
 - Both at the same time
 - Test out sharps
 - Whole Notes / Rhythm / Tails ?
 - Note sound
+
+Some Game Design
+- Snake
+- Python
 
 Done
 - Click on note to move onto the next

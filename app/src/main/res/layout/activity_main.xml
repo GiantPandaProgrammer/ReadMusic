@@ -35,7 +35,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginTop="680px"
+                android:layout_marginTop="720px"
                 android:gravity="bottom|center_horizontal">
 <!--               <TextView
                    android:layout_width="wrap_content"
