@@ -205,6 +205,17 @@ public class MidiReader {
 
     public static ArrayList<Integer> GetBothNotes() {
         ArrayList<Integer> notes = new ArrayList<Integer>();
+        notes.add(41); //F2
+        notes.add(43); //G2
+        notes.add(45); //A2
+        notes.add(47); //B2
+        notes.add(48); //C3
+        notes.add(50); //D3
+        notes.add(52); //E3
+        notes.add(53); //F3
+        notes.add(55); //G3
+        notes.add(57); //A3
+        notes.add(59); //B3
         notes.add(60); //C4 Middle C
         notes.add(62); //D4
         notes.add(64); //E4
@@ -220,18 +231,7 @@ public class MidiReader {
         notes.add(81); //A5
         notes.add(83); //B5
         notes.add(84); //C5
-        notes.add(41); //F2
-        notes.add(43); //G2
-        notes.add(45); //A2
-        notes.add(47); //B2
-        notes.add(48); //C3
-        notes.add(50); //D3
-        notes.add(52); //E3
-        notes.add(53); //F3
-        notes.add(55); //G3
-        notes.add(57); //A3
-        notes.add(59); //B3
-        notes.add(60); //C4 Middle C
+
         return notes;
     }
 
@@ -259,8 +259,16 @@ public class MidiReader {
             long tick = 480 * i;
             Random r = new Random();
             Integer randomIndex = r.nextInt(bagOfNotes.size());
+
+            if (randomIndex > bagOfNotes.size() - 2)
+            {
+                randomIndex = randomIndex - 2;
+            }
+
             NoteOn note = new NoteOn(tick, 1, bagOfNotes.get(randomIndex), 100);
             randomNotes.add(note);
+            NoteOn note2 = new NoteOn(tick, 1, bagOfNotes.get(randomIndex + 2), 100);
+            randomNotes.add(note2);
         }
         return randomNotes;
     }

@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
                 canvas.SetBass();
                 return true;
             case R.id.both_action:
-                canvas.SetBass();
+                canvas.SetBoth();
             default:
                 // If we got here, the user's action was not recognized.
                 // Invoke the superclass to handle it.

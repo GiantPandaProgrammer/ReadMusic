@@ -163,13 +163,13 @@ public class Drawer {
         Paint p = new Paint();
         p.setColor(Color.BLACK);
 
-        if (color == NoteColor.BLACK) {
+        /* if (color == NoteColor.BLACK) {
             p.setColor(Color.BLACK);
         } else if (color == NoteColor.RED) {
             p.setColor(Color.RED);
         } else if (color == NoteColor.GREEN) {
             p.setColor(Color.GREEN);
-        }
+        }*/
 
         p.setStyle(Paint.Style.FILL);
 

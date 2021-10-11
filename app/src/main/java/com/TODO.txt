@@ -3,11 +3,11 @@ Go back and forth in code
     Ctrl + [ or Ctrl + ]
 
 
+# page button
 
-# Constants file
 # play sound
+# Two notes at a time / Three notes
 # Midi song to trail
-# scrollable multiple lines of staffs?
 # Bass always have short line but treble has it only when needed?
 
 - Fix box for selecting note
@@ -21,6 +21,7 @@ Some Game Design
 - Python
 
 Done
+- Constants file
 - Click on note to move onto the next
 - Reset
 - Select notes
