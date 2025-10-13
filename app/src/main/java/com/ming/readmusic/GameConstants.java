@@ -1,9 +1,11 @@
 package com.ming.readmusic;
 
 public class GameConstants {
+    public static int sharpStart = 90;
     public static int lineSideMargins = 30;
+    public static int sharpWidth = 70;
     public static int clefWidth = 90;
-    public static int noteSideMargins = 50;
+    public static int noteSideMargins = 100;
     public static int spaceBetweenBeats = 100;
     public static int spaceBetweenLines = 30;
     public static int spaceBetweenHalfNotes = spaceBetweenLines / 2;

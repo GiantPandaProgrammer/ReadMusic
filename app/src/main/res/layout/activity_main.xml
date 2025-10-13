@@ -37,18 +37,16 @@
                 android:orientation="horizontal"
                 android:layout_marginTop="720px"
                 android:gravity="bottom|center_horizontal">
-<!--               <TextView
-                   android:layout_width="wrap_content"
-                   android:layout_height="wrap_content"
-                   android:text="Press the correct key to move on"
-                   android:textSize="20dp"
-                   android:layout_gravity="center"
-                   android:layout_marginLeft="200px"/>-->
                <Button
                     android:layout_width="wrap_content"
                     android:layout_height="50dp"
                     android:text="HINT"
                     android:onClick="ShowHint"/>
+               <Button
+                   android:layout_width="wrap_content"
+                   android:layout_height="50dp"
+                   android:text="Refresh"
+                   android:onClick="Refresh"/>
             </LinearLayout>
         </FrameLayout>
 

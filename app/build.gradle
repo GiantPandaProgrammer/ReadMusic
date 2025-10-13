@@ -1,15 +1,15 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 33
 
 
     defaultConfig {
         applicationId "com.ming.readmusic"
         minSdkVersion 25
-        targetSdkVersion 29
-        versionCode 15
-        versionName "15.0"
+        targetSdkVersion 33
+        versionCode 19
+        versionName "19.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

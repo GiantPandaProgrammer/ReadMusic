@@ -6,9 +6,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class Drawer {
@@ -26,26 +24,44 @@ public class Drawer {
         this.notesPerLine = notesPerLine;
     }
 
-    public void DrawSelectedKeyboardNote(Canvas canvas, double currentTick, ArrayList<NoteOnDisplay> notes) {
+    public void DrawSelectedKeyboardNote(Canvas canvas, NoteOnDisplay selected) {
 
         int startX = GameConstants.middleCstartX;
         int startY = GameConstants.middleCstartY;
 
-        Paint selected = new Paint();
-        selected.setColor(Color.RED);
-        selected.setStyle(Paint.Style.FILL);
-        selected.setStrokeWidth(5f);
+        Paint red = new Paint();
+        red.setColor(Color.RED);
+        red.setStyle(Paint.Style.FILL);
+        red.setStrokeWidth(5f);
 
-        for (int i = 0; i < notes.size(); i++) {
-            NoteOnDisplay note = notes.get(i);
-            if (note.getTick() == currentTick) {
-                if (note.isSharp) {
-                    canvas.drawRect(startX + (50 - 12.5f) +  note.noteDelta * GameConstants.white_key_width, startY, startX + (50 - 12.5f) + GameConstants.black_key_width + note.noteDelta * GameConstants.white_key_width, startY + GameConstants.black_key_height, selected);
-                } else {
-                    Log.d("hint", Integer.toString(note.noteDelta));
-                    canvas.drawRect(startX + note.noteDelta * GameConstants.white_key_width, startY, startX + (note.noteDelta + 1) * GameConstants.white_key_width, startY + GameConstants.white_key_height, selected);
-                }
+        if (selected.isSharp) {
+
+            if (isBlackNote(selected))
+            {
+                canvas.drawRect(startX + (50 - 12.5f) +  selected.noteDelta * GameConstants.white_key_width, startY, startX + (50 - 12.5f) + GameConstants.black_key_width + selected.noteDelta * GameConstants.white_key_width, startY + GameConstants.black_key_height, red);
             }
+            else
+            {
+                canvas.drawRect(startX + (selected.noteDelta + 1) * GameConstants.white_key_width, startY, startX + (selected.noteDelta + 2) * GameConstants.white_key_width, startY + GameConstants.white_key_height, red);
+            }
+        } else {
+            canvas.drawRect(startX + selected.noteDelta * GameConstants.white_key_width, startY, startX + (selected.noteDelta + 1) * GameConstants.white_key_width, startY + GameConstants.white_key_height, red);
+        }
+    }
+
+
+    public boolean isBlackNote(NoteOnDisplay note) {
+        return note.isSharp && isSharpBlackNote(note);
+    }
+
+    public boolean isSharpBlackNote(NoteOnDisplay note) {
+        if (note.letter == "C#" || note.letter == "D#" || note.letter == "F#" || note.letter == "G#" || note.letter == "A#")
+        {
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
 
@@ -115,7 +131,23 @@ public class Drawer {
         canvas.drawLine(xPos, middleC_Y - GameConstants.spaceBetweenLines * 8f, xPos, middleC_Y + GameConstants.spaceBetweenLines * 8f, p);
     }
 
-    public void DrawNote(NoteOnDisplay note, Clef clef, Canvas canvas) {
+    public void DrawHorizontalLine(Canvas canvas, double currentTick) {
+
+        int lineNum = ((int) (currentTick / 480)) / notesPerLine;
+        double beatNum = ((double) currentTick / 480) % notesPerLine;
+
+        int xPos = (int) Math.ceil(GameConstants.lineSideMargins + GameConstants.noteSideMargins + GameConstants.clefWidth + beatNum * GameConstants.spaceBetweenBeats);
+
+        Paint p = new Paint();
+        p.setColor(Color.BLACK);
+        p.setStyle(Paint.Style.STROKE);
+        p.setStrokeWidth(5f);
+
+        int middleC_Y = GameConstants.marginTop + (GameConstants.spaceBetweenLines * 5) + (lineNum) * (GameConstants.spaceBetweenLines *4 + 100 + GameConstants.spaceBetweenClefs);
+        canvas.drawLine(xPos - 20, middleC_Y + 30, xPos + 30, middleC_Y + 30, p);
+    }
+
+    public void DrawNote(NoteOnDisplay note, Clef clef, Canvas canvas, NoteDisplaySystem system) {
         long noteTick = note.getTick();
 
         int lineNum = ((int) (noteTick / 480)) / notesPerLine;
@@ -141,22 +173,31 @@ public class Drawer {
         int Xpos = (int) Math.ceil(GameConstants.lineSideMargins + GameConstants.noteSideMargins + GameConstants.clefWidth + beatNum * GameConstants.spaceBetweenBeats);
 
         TailDirection tailDirection;
-        if (Ypos > middleLine_Y) {
-            tailDirection = TailDirection.Up;
-        } else {
-            tailDirection = TailDirection.Down;
-        }
+        tailDirection = TailDirection.Up;
 
-        if (GameConstants.noteMode == NoteMode.Note) {
+        if (system == NoteDisplaySystem.Staff) {
             DrawNoteShape(canvas, Xpos, Ypos, 30, 40, tailDirection, note.color);
         } else {
-            DrawLetter(canvas, note.letter, Xpos, Ypos);
+            DrawNumber(canvas, note, Xpos, middleC_Y);
+            //DrawLetter(canvas, note.letter, Xpos, Ypos);
         }
 
-        DrawShortLine(canvas, note, Xpos, Ypos);
-        if (note.isSharp) {
-            DrawSharp(canvas, Xpos, Ypos);
+        /*
+        if (GameConstants.noteMode == NoteMode.Note) {
+            DrawNoteShape(canvas, Xpos, Ypos, 30, 40, tailDirection, note.color);
+        } else if (GameConstants.noteMode == NoteMode.Letter){
+            DrawLetter(canvas, note.letter, Xpos, Ypos);
+        } else {
+            DrawNumber(canvas, note.noteNumber, Xpos, Ypos);
+        }*/
+
+        if (system == NoteDisplaySystem.Staff) {
+            DrawShortLine(canvas, note, Xpos, Ypos);
         }
+
+        /* if (note.isSharp) {
+            DrawSharp(canvas, Xpos, Ypos);
+        } */
     }
 
     private void DrawNoteShape(Canvas canvas, int x, int y, int height, int width, TailDirection tailDirection, NoteColor color) {
@@ -206,10 +247,36 @@ public class Drawer {
         canvas.drawText(letter, startX, startY, textPaint);
     }
 
+    private void DrawNumber(Canvas canvas, NoteOnDisplay note, int x, int y) {
+        Paint textPaint = new Paint();
+        textPaint = new Paint();
+        textPaint.setColor(Color.BLACK);
+
+        textPaint.setStyle(Paint.Style.FILL);
+        textPaint.setStrokeWidth(14f);
+        textPaint.setTextSize(60);
+
+        Rect bounds = new Rect();
+        textPaint.getTextBounds(Integer.toString(note.noteNumber), 0, Integer.toString(note.noteNumber).length(), bounds);
+        int startX = x - (bounds.width() / 2);
+        int startY = y + (bounds.height() / 2);
+        canvas.drawText(Integer.toString(note.noteNumber), startX, startY, textPaint);
+
+        if (note.dotNum < 0) {
+            for (int i = 0; i > note.dotNum; i--) {
+                canvas.drawCircle(startX + 20, startY + 20 - 20 * i, 4, textPaint);
+            }
+        } else if (note.dotNum > 0) {
+            for (int i = 0; i < note.dotNum; i++) {
+                canvas.drawCircle(startX + 20, startY - 60 - 20 * i, 4, textPaint);
+            }
+        }
+    }
+
     private void DrawShortLine(Canvas canvas, NoteOnDisplay note, int noteX, int noteY) {
         int lineNum = 0;
-        int lowerLine = GameConstants.marginTop + (GameConstants.spaceBetweenLines * 4) + (lineNum) * (GameConstants.spaceBetweenLines *4 + 100 + GameConstants.spaceBetweenClefs);
-        int upperLine = GameConstants.marginTop + (lineNum) * (GameConstants.spaceBetweenLines *4 + 100 + GameConstants.spaceBetweenClefs);
+        int lowerLine = GameConstants.marginTop + (GameConstants.spaceBetweenLines * 4) + GameConstants.spaceBetweenClefs + (GameConstants.spaceBetweenLines * 4) + (lineNum) * (GameConstants.spaceBetweenLines *4 + 100 + GameConstants.spaceBetweenClefs);
+        int upperLine = GameConstants.marginTop + (lineNum) * (GameConstants.spaceBetweenLines * 4 + 100 + GameConstants.spaceBetweenClefs);
 
         Paint p = new Paint();
         p = new Paint();
@@ -255,7 +322,7 @@ public class Drawer {
         canvas.drawText("#", startX, startY, textPaint);
     }
 
-    public void DrawClefsAndLines(int num, Clef clef, Canvas canvas, Resources resources) {
+    public void DrawClefsAndLines(int num, Clef clef, Canvas canvas, Resources resources, Scale key) {
         Paint p = new Paint();
         p = new Paint();
         p.setColor(Color.BLACK);
@@ -263,7 +330,7 @@ public class Drawer {
         p.setStrokeWidth(3f);
         int spaceBetweenClefs = 60;
         int spaceBetweenLines = 30;
-        int startY = GameConstants.marginTop + num * (spaceBetweenLines *4 + 100 + spaceBetweenClefs);
+        int startY = GameConstants.marginTop + num * (spaceBetweenLines * 4 + 100 + spaceBetweenClefs);
 
         for (int i = 0; i < 5; i++) {
             canvas.drawLine(GameConstants.lineSideMargins, startY + spaceBetweenLines * i, canvas.getWidth() - GameConstants.lineSideMargins, startY + spaceBetweenLines * i, p);
@@ -281,6 +348,65 @@ public class Drawer {
         b.setBounds(GameConstants.lineSideMargins, startY + spaceBetweenLines * 4 + spaceBetweenClefs, GameConstants.clefWidth + GameConstants.lineSideMargins, startY + spaceBetweenLines * 4 + spaceBetweenClefs + 30 * 4);
         b.draw(canvas);
 
+        if (key == Scale.DMajor) {
+            Drawable s = resources.getDrawable(R.drawable.sharp, null);
+            int fSharpYStartTreble = startY - 38;
+            int fShartXStartTreble = GameConstants.sharpStart + 20;
+            s.setBounds(fShartXStartTreble, fSharpYStartTreble, fShartXStartTreble + GameConstants.sharpWidth, fSharpYStartTreble + GameConstants.sharpWidth);
+            s.draw(canvas);
+
+            int cSharpYStartTreble = startY + 7;
+            s.setBounds(GameConstants.sharpStart, cSharpYStartTreble, GameConstants.sharpWidth + GameConstants.sharpStart, cSharpYStartTreble + GameConstants.sharpWidth);
+            s.draw(canvas);
+
+            int fSharpYStartBass = startY + spaceBetweenLines * 4 + spaceBetweenClefs - 5;
+            s.setBounds(GameConstants.sharpStart, fSharpYStartBass, GameConstants.sharpStart + GameConstants.sharpWidth, fSharpYStartBass + GameConstants.sharpWidth);
+            s.draw(canvas);
+
+            int cSharpYStartBass = startY + spaceBetweenLines * 4 + spaceBetweenClefs + 37;
+            int cShartXStartBass = GameConstants.sharpStart + 20;
+            s.setBounds(cShartXStartBass, cSharpYStartBass, cShartXStartBass + GameConstants.sharpWidth, cSharpYStartBass + GameConstants.sharpWidth);
+            s.draw(canvas);
+        }
+
+        if (key == Scale.AMajor) {
+            Drawable s = resources.getDrawable(R.drawable.sharp, null);
+            int fSharpYStartTreble = startY - 36;
+            int fShartXStartTreble = GameConstants.sharpStart - 20;
+            s.setBounds(fShartXStartTreble, fSharpYStartTreble, fShartXStartTreble + GameConstants.sharpWidth, fSharpYStartTreble + GameConstants.sharpWidth);
+            s.draw(canvas);
+
+            int cSharpYStartTreble = startY + 7;
+            s.setBounds(GameConstants.sharpStart, cSharpYStartTreble, GameConstants.sharpWidth + GameConstants.sharpStart, cSharpYStartTreble + GameConstants.sharpWidth);
+            s.draw(canvas);
+
+            int gSharpYStartTreble = startY + - 42;
+            int gShartXStartTreble = GameConstants.sharpStart + 20;
+            s.setBounds(gShartXStartTreble, gSharpYStartTreble, gShartXStartTreble + GameConstants.sharpWidth, gSharpYStartTreble + GameConstants.sharpWidth);
+            s.draw(canvas);
+
+            int fSharpYStartBass = startY + spaceBetweenLines * 4 + spaceBetweenClefs - 5;
+            s.setBounds(GameConstants.sharpStart, fSharpYStartBass, GameConstants.sharpStart + GameConstants.sharpWidth, fSharpYStartBass + GameConstants.sharpWidth);
+            s.draw(canvas);
+
+            int cSharpYStartBass = startY + spaceBetweenLines * 4 + spaceBetweenClefs + 37;
+            int cShartXStartBass = GameConstants.sharpStart + 20;
+            s.setBounds(cShartXStartBass, cSharpYStartBass, cShartXStartBass + GameConstants.sharpWidth, cSharpYStartBass + GameConstants.sharpWidth);
+            s.draw(canvas);
+
+            int gSharpYStartBass = startY + spaceBetweenLines * 4 + spaceBetweenClefs - 28;
+            int gShartXStartBass = GameConstants.sharpStart + 38;
+            s.setBounds(gShartXStartBass, gSharpYStartBass, gShartXStartBass + GameConstants.sharpWidth, gSharpYStartBass + GameConstants.sharpWidth);
+            s.draw(canvas);
+        }
+
+        if (key == Scale.GMajor) {
+            Drawable s = resources.getDrawable(R.drawable.sharp, null);
+            int fSharpYStartTreble = startY - 36;
+            int fShartXStartTreble = GameConstants.sharpStart - 20;
+            s.setBounds(fShartXStartTreble, fSharpYStartTreble, fShartXStartTreble + GameConstants.sharpWidth, fSharpYStartTreble + GameConstants.sharpWidth);
+            s.draw(canvas);
+        }
         /*
         if (clef == Clef.Treble) {
             Drawable t = resources.getDrawable(R.drawable.treble_clef, null);

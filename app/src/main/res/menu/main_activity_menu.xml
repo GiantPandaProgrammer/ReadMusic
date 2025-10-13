@@ -1,16 +1,83 @@
 <menu xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    <item android:id="@+id/treble_action"
-        android:title="Treble Staff Notes"
-        app:showAsAction="collapseActionView" />
 
-    <item android:id="@+id/bass_action"
-        android:title="Bass Staff Notes"
-        app:showAsAction="collapseActionView" />
+    <item android:id="@+id/staff"
+        android:title="Staff">
 
-    <item android:id="@+id/both_action"
-        android:title="Both Staff Notes"
-        app:showAsAction="collapseActionView" />
+        <menu xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:android="http://schemas.android.com/apk/res/android" >
+
+        <item android:id="@+id/treble_action"
+            android:title="Treble Staff Notes"
+            app:showAsAction="collapseActionView" />
+
+        <item android:id="@+id/bass_action"
+            android:title="Bass Staff Notes"
+            app:showAsAction="collapseActionView" />
+
+        <item android:id="@+id/both_action"
+            android:title="Both Staff Notes"
+            app:showAsAction="collapseActionView" />
+
+        </menu>
+    </item>
+
+    <item android:id="@+id/key"
+        android:title="Key">
+
+        <menu xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:android="http://schemas.android.com/apk/res/android" >
+
+            <item android:id="@+id/c_major_scale"
+                android:title="C Major"
+                app:showAsAction="collapseActionView" />
+
+            <item android:id="@+id/d_major_scale"
+                android:title="D Major"
+                app:showAsAction="collapseActionView" />
+
+            <item android:id="@+id/a_major_scale"
+                android:title="A Major"
+                app:showAsAction="collapseActionView" />
+        </menu>
+    </item>
+    <item android:id="@+id/noteDisplay"
+        android:title="Note Display">
+
+        <menu xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:android="http://schemas.android.com/apk/res/android" >
+
+            <item android:id="@+id/staff_system"
+                android:title="Staff"
+                app:showAsAction="collapseActionView" />
+
+            <item android:id="@+id/number_system"
+                android:title="Number"
+                app:showAsAction="collapseActionView" />
+        </menu>
+    </item>
+<!--
+
+    <item android:id="@+id/numNotes"
+        android:title="Num Notes">
+
+        <menu xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:android="http://schemas.android.com/apk/res/android" >
+
+        <item android:id="@+id/single_note"
+            android:title="Single Note"
+            app:showAsAction="collapseActionView" />
+
+        <item android:id="@+id/double_notes"
+            android:title="Double Notes"
+            app:showAsAction="collapseActionView" />
+
+        <item android:id="@+id/triple_notes"
+            android:title="Triple Notes"
+            app:showAsAction="collapseActionView" />
+        </menu>
+    </item>
+-->
 
 </menu>

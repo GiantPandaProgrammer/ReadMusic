@@ -2,18 +2,11 @@ package com.ming.readmusic;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Toast;
-
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -47,6 +40,10 @@ public class MainActivity extends AppCompatActivity {
         canvas.ShowHint();
     }
 
+    public void Refresh(View view) {
+        CanvasView canvas = (CanvasView) findViewById(R.id.signature_canvas);
+        canvas.Refresh();
+    }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         CanvasView canvas = (CanvasView) findViewById(R.id.signature_canvas);
@@ -59,6 +56,22 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             case R.id.both_action:
                 canvas.SetBoth();
+                return true;
+            case R.id.c_major_scale:
+                canvas.SetCMajorScale();
+                return true;
+            case R.id.d_major_scale:
+                canvas.SetDMajorScale();
+                return true;
+            case R.id.a_major_scale:
+                canvas.SetAMajorScale();
+                return true;
+            case R.id.staff_system:
+                canvas.SetStaff();
+                return true;
+            case R.id.number_system:
+                canvas.SetNumber();
+                return true;
             default:
                 // If we got here, the user's action was not recognized.
                 // Invoke the superclass to handle it.
