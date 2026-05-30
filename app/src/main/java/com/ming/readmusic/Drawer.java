@@ -202,7 +202,14 @@ public class Drawer {
 
     private void DrawNoteShape(Canvas canvas, int x, int y, int height, int width, TailDirection tailDirection, NoteColor color) {
         Paint p = new Paint();
-        p.setColor(Color.BLACK);
+        if (color == NoteColor.BLACK)
+            p.setColor(Color.BLACK);
+        else if (color == NoteColor.RED)
+            p.setColor(Color.RED);
+        else if (color == NoteColor.GREEN)
+            p.setColor(Color.GREEN);
+        else
+            p.setColor(Color.BLACK);
 
         /* if (color == NoteColor.BLACK) {
             p.setColor(Color.BLACK);

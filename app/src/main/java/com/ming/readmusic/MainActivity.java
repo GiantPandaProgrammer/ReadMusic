@@ -2,6 +2,7 @@ package com.ming.readmusic;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.graphics.Canvas;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -40,6 +41,10 @@ public class MainActivity extends AppCompatActivity {
         canvas.ShowHint();
     }
 
+    public void PlaySong(View view) {
+        CanvasView canvas = (CanvasView) findViewById(R.id.signature_canvas);
+        canvas.PlaySong();
+    }
     public void Refresh(View view) {
         CanvasView canvas = (CanvasView) findViewById(R.id.signature_canvas);
         canvas.Refresh();

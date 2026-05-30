@@ -47,6 +47,11 @@
                    android:layout_height="50dp"
                    android:text="Refresh"
                    android:onClick="Refresh"/>
+               <Button
+                   android:layout_width="wrap_content"
+                   android:layout_height="50dp"
+                   android:text="Start"
+                   android:onClick="PlaySong"/>
             </LinearLayout>
         </FrameLayout>
 

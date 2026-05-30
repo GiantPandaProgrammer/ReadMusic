@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.media.MediaPlayer;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -37,10 +38,12 @@ public class CanvasView extends View {
     private double currentTick = 0;
     private NoteBundle numNotes = NoteBundle.Single;
     private Drawer drawer;
-    private boolean showHint = false;
+    private boolean showHint = true;
     private boolean playSound = true;
     private int clickBoxWidth = GameConstants.spaceBetweenBeats;
     private int clickBoxHeight = 600;
+    private Handler handler = new Handler();
+    private NoteOnDisplay currentSelected = null;
 
     public CanvasView(Context c, AttributeSet attrs) {
         super(c, attrs);
@@ -114,27 +117,37 @@ public class CanvasView extends View {
         for (int i = 0; i < currentNotes.size(); i++) {
             drawer.DrawNote(currentNotes.get(i), clef, canvas, this.system);
         }
-
-        NoteOnDisplay selected = null;
+        NoteOnDisplay newSelected = null;
 
         for (int i = 0; i < currentNotes.size(); i++) {
             NoteOnDisplay note = currentNotes.get(i);
-            if (note.getTick() == currentTick) {
-                selected = note;
+            if (note.getTick() < currentTick + 100 && note.getTick() > currentTick - 100) {
+                newSelected = note;
             }
         }
 
-        Log.d("test", selected.toString());
-        if (showHint && selected != null && (!drawer.isBlackNote(selected)))
+        if ((currentSelected != null && newSelected != null && newSelected.getTick() != currentSelected.getTick())
+        || (newSelected == null && currentSelected != null)) {
+            if (currentSelected.color == NoteColor.BLACK)
+                currentSelected.color = NoteColor.RED;
+
+
+        }
+
+        //if (newSelected != null)
+            currentSelected = newSelected;
+
+        //Log.d("test", currentSelected.toString());
+        if (showHint && currentSelected != null && (!drawer.isBlackNote(currentSelected)))
         {
-            drawer.DrawSelectedKeyboardNote(canvas, selected);
+            drawer.DrawSelectedKeyboardNote(canvas, currentSelected);
         }
 
         drawer.DrawKeyboard(canvas);
 
-        if (showHint && selected != null && drawer.isBlackNote(selected))
+        if (showHint && currentSelected != null && drawer.isBlackNote(currentSelected))
         {
-            drawer.DrawSelectedKeyboardNote(canvas, selected);
+            drawer.DrawSelectedKeyboardNote(canvas, currentSelected);
         }
 
         //DrawBoundingBox(canvas);
@@ -174,16 +187,6 @@ public class CanvasView extends View {
 
     public void SetSingle() {
         numNotes = NoteBundle.Single;
-        this.Refresh();
-    }
-
-    public void SetDouble() {
-        numNotes = NoteBundle.Double;
-        this.Refresh();
-    }
-
-    public void SetTriple() {
-        numNotes = NoteBundle.Triple;
         this.Refresh();
     }
 
@@ -228,6 +231,48 @@ public class CanvasView extends View {
     public void ShowHint() {
         this.showHint = !this.showHint;
         this.invalidate();
+    }
+
+    public void PlaySong() {
+        handler = new Handler();
+
+        final Runnable r = new Runnable() {
+            public void run() {
+                Log.d("Hello", Double.toString(currentTick));
+                currentTick = currentTick + 48;
+
+                if (currentTick == GameConstants.numOfNotes * 480) {
+                    currentTick = 0;
+                } else {
+                    handler.postDelayed(this, 100);
+                }
+
+                invalidate();
+            }
+        };
+
+        handler.postDelayed(r, 100);
+
+        /*
+        handler = new Handler();
+
+        final Runnable r = new Runnable() {
+            public void run() {
+                Log.d("Hello", Double.toString(currentTick));
+                currentTick = currentTick + 480;
+
+                if (currentTick == GameConstants.numOfNotes * 480) {
+                    currentTick = 0;
+                } else {
+                    handler.postDelayed(this, 1000);
+                }
+
+                invalidate();
+            }
+        };
+
+        handler.postDelayed(r, 1000);
+        */
     }
 
     public boolean isPressed = false;

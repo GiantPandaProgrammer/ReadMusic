@@ -2,39 +2,21 @@ Go back and forth in code
     Ctrl + Alt + Left and Ctrl + Alt + Right
     Ctrl + [ or Ctrl + ]
 
-Wendy
-# Check out competition.
-# To the masses.
-# Copy right issues.
- Credit. https://freesound.org/people/TEDAgame/packs/25405/
 
 
-# Update Android Studio? Older version of Android Studio still usable?
-# Add ads
-https://developers.google.com/admob/android/app-open#java_6
+MIDI songs
+moving bar. sync tick with space?
+BPM
+hit note
+- up note = within area
+- if hit up note, turn green
+- next up note, set the current to red
+More than one note at a time
 
-# Organization. Drawer.
-https://developer.android.com/develop/ui/views/components/radiobutton
-# Lessons in order. Ascending. Row a boat. So mi mi. Fa re re.
-# Ask dad about Numeric notes
-
-
-
-# numeric system
-# dots below
-# note starting at 2 for numbers
-# changing from staff to number refreshes
-# vertical should be underline for number. Draw a rectangle around number
-# bpm
 
 # Rest notes
-# More than one page. Navigate pages.
-# Allow user to enter in a string of notes and save it.
 # Play a note and ask for the letter? Ear training.
 
-
-# Rename sound files
-# Test if click on a key plays the correct file
 
 Done
 # Hint on permanently or off
