@@ -117,7 +117,7 @@ public class Drawer {
 
     public void DrawVerticalLine(Canvas canvas, double currentTick) {
 
-        int lineNum = ((int) (currentTick / 480)) / notesPerLine;
+        int lineNum = 0; //((int) (currentTick / 480)) / notesPerLine;
         double beatNum = ((double) currentTick / 480) % notesPerLine;
 
         int xPos = (int) Math.ceil(GameConstants.lineSideMargins + GameConstants.noteSideMargins + GameConstants.clefWidth + beatNum * GameConstants.spaceBetweenBeats);
@@ -150,7 +150,7 @@ public class Drawer {
     public void DrawNote(NoteOnDisplay note, Clef clef, Canvas canvas, NoteDisplaySystem system) {
         long noteTick = note.getTick();
 
-        int lineNum = ((int) (noteTick / 480)) / notesPerLine;
+        int lineNum = 0; // ((int) (noteTick / 480)) / notesPerLine;
         double beatNum = ((double) noteTick / 480) % notesPerLine;
 
         int middleC_Y;

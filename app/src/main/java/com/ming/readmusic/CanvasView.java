@@ -15,6 +15,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 // cmd + [ and cmd + ]  go back and forth in code
@@ -30,21 +31,24 @@ public class CanvasView extends View {
     private Scale scale = Scale.CMajor;
     private NoteDisplaySystem system = NoteDisplaySystem.Staff;
     private static final float TOLERANCE = 5;
-    private ArrayList<NoteOnDisplay> currentNotes = new ArrayList<NoteOnDisplay>();
+    private ArrayList<NoteOnDisplay> songNotes = new ArrayList<NoteOnDisplay>();
     private ArrayList<NoteOnDisplay> allNotes = new ArrayList<NoteOnDisplay>();
     private int noteSpace;
     private Clef clef = Clef.Treble;
     private NoteMode noteMode = NoteMode.Note;
     private double currentTick = 0;
-    private NoteBundle numNotes = NoteBundle.Single;
+    private NoteBundle numNotes = NoteBundle.Double;
     private Drawer drawer;
     private boolean showHint = true;
     private boolean playSound = true;
     private int clickBoxWidth = GameConstants.spaceBetweenBeats;
     private int clickBoxHeight = 600;
     private Handler handler = new Handler();
-    private NoteOnDisplay currentSelected = null;
+    private ArrayList<NoteOnDisplay> currentSelected = new ArrayList<NoteOnDisplay>();
+    private boolean isPlaying = false;
+    private int noteSelectRangeError = 150;
 
+    private boolean useMIDI = true;
     public CanvasView(Context c, AttributeSet attrs) {
         super(c, attrs);
         context = c;
@@ -60,21 +64,26 @@ public class CanvasView extends View {
         mPaint.setStrokeJoin(Paint.Join.ROUND);
         mPaint.setStrokeWidth(4f);
 
-/*        InputStream stream;
+        if (useMIDI) {
+            InputStream stream;
 
-        try {
-            stream = getContext().getAssets().open("HAPPY_BIRTHDAY.mid");
-            MidiReader reader = new MidiReader(stream);
-            notes = reader.GetNotes();
+            try {
+                stream = getContext().getAssets().open("FUR_ELISE.mid");
+                MidiReader reader = new MidiReader(stream);
+                this.songNotes = reader.GetNoteDisplays(reader.GetNotes(), scale);
 
-        } catch(final Throwable tx) {
+            } catch(final Throwable tx) {
 
-        }*/
+            }
+        }
+        else {
+            this.songNotes = MidiReader.GenerateRandomNoteDisplays(GameConstants.numOfNotes, clef, numNotes, scale);
+        }
 
         clef = Clef.Treble;
-        this.currentNotes = MidiReader.GenerateRandomNoteDisplays(GameConstants.numOfNotes, clef, numNotes, scale);
+
         this.allNotes = MidiReader.GetAllNotes(scale);
-        drawer = new Drawer(this.currentNotes);
+        drawer = new Drawer(this.songNotes);
         system = NoteDisplaySystem.Staff;
     }
 
@@ -100,7 +109,7 @@ public class CanvasView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        int numClef = GetNumClefs(canvas);
+        int numClef = 1; //GetNumClefs(canvas);
 
         if (system == NoteDisplaySystem.Staff) {
             for (int i = 0; i < numClef; i++) {
@@ -114,50 +123,70 @@ public class CanvasView extends View {
             drawer.DrawHorizontalLine(canvas, currentTick);
         }
 
-        for (int i = 0; i < currentNotes.size(); i++) {
-            drawer.DrawNote(currentNotes.get(i), clef, canvas, this.system);
-        }
-        NoteOnDisplay newSelected = null;
+        int page = (int) (currentTick / (480 * drawer.notesPerLine));
 
-        for (int i = 0; i < currentNotes.size(); i++) {
-            NoteOnDisplay note = currentNotes.get(i);
-            if (note.getTick() < currentTick + 100 && note.getTick() > currentTick - 100) {
-                newSelected = note;
+        for (int i = 0; i < songNotes.size(); i++) {
+            NoteOnDisplay note = songNotes.get(i);
+            if (note.getTick() >= page * (480 * drawer.notesPerLine) && note.getTick() < (page + 1)* (480 * drawer.notesPerLine))
+            {
+                drawer.DrawNote(songNotes.get(i), clef, canvas, this.system);
             }
         }
 
-        if ((currentSelected != null && newSelected != null && newSelected.getTick() != currentSelected.getTick())
-        || (newSelected == null && currentSelected != null)) {
-            if (currentSelected.color == NoteColor.BLACK)
-                currentSelected.color = NoteColor.RED;
+        ArrayList<NoteOnDisplay> newSelected = new ArrayList<NoteOnDisplay>();
 
-
+        for (int i = 0; i < songNotes.size(); i++) {
+            NoteOnDisplay note = songNotes.get(i);
+            if (note.getTick() < currentTick + this.noteSelectRangeError && note.getTick() > currentTick - this.noteSelectRangeError) {
+                newSelected.add(note);
+            }
         }
 
-        //if (newSelected != null)
-            currentSelected = newSelected;
+        for (NoteOnDisplay oldNote : currentSelected) {
+            boolean doesNoteExist = false;
+            for (NoteOnDisplay newNote : newSelected) {
+                if (newNote.getTick() == oldNote.getTick() && newNote.getNoteValue() == oldNote.getNoteValue())
+                {
+                    doesNoteExist = true;
+                }
+            }
 
-        //Log.d("test", currentSelected.toString());
-        if (showHint && currentSelected != null && (!drawer.isBlackNote(currentSelected)))
+            if (!doesNoteExist && isPlaying && oldNote.color == NoteColor.BLACK) {
+                oldNote.color = NoteColor.RED;
+            }
+        }
+
+        currentSelected = newSelected;
+
+        DrawSelectedNote(canvas);
+    }
+
+    private void DrawSelectedNote(Canvas canvas) {
+        if (showHint && currentSelected.size() > 0)
         {
-            drawer.DrawSelectedKeyboardNote(canvas, currentSelected);
+            for (NoteOnDisplay note : currentSelected) {
+                if (!drawer.isBlackNote(note)) {
+                    drawer.DrawSelectedKeyboardNote(canvas, note);
+                }
+            }
         }
 
         drawer.DrawKeyboard(canvas);
 
-        if (showHint && currentSelected != null && drawer.isBlackNote(currentSelected))
+        if (showHint && currentSelected.size() > 0)
         {
-            drawer.DrawSelectedKeyboardNote(canvas, currentSelected);
+            for (NoteOnDisplay note : currentSelected) {
+                if (drawer.isBlackNote(note)) {
+                    drawer.DrawSelectedKeyboardNote(canvas, note);
+                }
+            }
         }
-
-        //DrawBoundingBox(canvas);
     }
-
     // Gets the line number?
     private int GetNumClefs(Canvas canvas) {
-        if (currentNotes.size() == 0) { return 1; }
+        if (songNotes.size() == 0) { return 1; }
 
-        NoteOnDisplay lastNote = currentNotes.get(currentNotes.size() - 1);
+        NoteOnDisplay lastNote = songNotes.get(songNotes.size() - 1);
         long noteTick = lastNote.getTick();
         int lineNum = ((int) (noteTick / 480)) / GameConstants.notesPerLine;
 
@@ -222,7 +251,7 @@ public class CanvasView extends View {
     }
 
     public void Refresh() {
-        this.currentNotes = MidiReader.GenerateRandomNoteDisplays(GameConstants.numOfNotes, clef, numNotes, scale);
+        this.songNotes = MidiReader.GenerateRandomNoteDisplays(GameConstants.numOfNotes, clef, numNotes, scale);
         this.currentTick = 0;
         this.invalidate();
     }
@@ -233,16 +262,38 @@ public class CanvasView extends View {
         this.invalidate();
     }
 
+    public void BlackAllNotes() {
+        for (int i = 0; i < this.songNotes.size(); i++) {
+            this.songNotes.get(i).color = NoteColor.BLACK;
+        }
+    }
+
+    private long GetLastTick() {
+
+        long lastTick = 0;
+        for (int i = 0; i < this.songNotes.size(); i++) {
+            if (this.songNotes.get(i).getTick() > lastTick) {
+                lastTick = this.songNotes.get(i).getTick();
+            }
+        }
+        return lastTick;
+    }
     public void PlaySong() {
+
+        if (isPlaying) {
+            return;
+        }
+
+        this.BlackAllNotes();
         handler = new Handler();
 
         final Runnable r = new Runnable() {
             public void run() {
-                Log.d("Hello", Double.toString(currentTick));
-                currentTick = currentTick + 48;
+                currentTick = currentTick + 24;
 
-                if (currentTick == GameConstants.numOfNotes * 480) {
+                if (currentTick > GetLastTick()) {
                     currentTick = 0;
+                    isPlaying = false;
                 } else {
                     handler.postDelayed(this, 100);
                 }
@@ -252,7 +303,7 @@ public class CanvasView extends View {
         };
 
         handler.postDelayed(r, 100);
-
+        isPlaying = true;
         /*
         handler = new Handler();
 
@@ -315,9 +366,11 @@ public class CanvasView extends View {
         }
 
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
+
             float x = event.getX();
             float y = event.getY();
 
+            /*
             for (int i = 0; i < this.currentNotes.size(); i++) {
                 long noteTick = this.currentNotes.get(i).getTick();
 
@@ -335,7 +388,7 @@ public class CanvasView extends View {
                     int noteIndex = (int) this.currentTick / 480;
                 }
             }
-
+*/
             if (isClickOnKeyboard(x, y)) {
 
                 NoteOnDisplay clickedNote = getNoteClickedOn(x, y);
@@ -347,23 +400,37 @@ public class CanvasView extends View {
                     Log.d("note not found","note not found");
                 }
 
+                //int noteIndex = (int) this.currentSelected.getTick() / 480;
 
-                int noteIndex = (int) this.currentTick / 480;
-                NoteOnDisplay currentNote = this.currentNotes.get(noteIndex);
+                //NoteOnDisplay currentNote = this.currentSelected;
 
                 // for each note in current tick
                 // if list of x, y is not in note return true
-                if (!isClickOnSelectNote(x, y)) {
+                NoteOnDisplay selectedNote = isClickOnSelectNote(x, y);
+                if (selectedNote == null) {
                     return true;
                 }
 
-                this.currentNotes.set(noteIndex, currentNote);
+                selectedNote.color = NoteColor.GREEN;
+                this.invalidate();
+                //this.currentNotes.set(noteIndex, currentNote);
 
-                this.currentTick = this.currentTick + 480;
+                if (isPlaying) {
 
-                if (this.currentTick == GameConstants.numOfNotes * 480) {
-                    this.Refresh();
-                    this.currentTick = 0;
+                }
+                else {
+                    for (NoteOnDisplay note : currentSelected) {
+                       if (note.color != NoteColor.GREEN) {
+                           return true;
+                       }
+                    }
+
+                    this.currentTick = this.currentTick + 480;
+
+                    if (this.currentTick == GameConstants.numOfNotes * 480) {
+                        this.Refresh();
+                        this.currentTick = 0;
+                    }
                 }
 
                 //this.showHint = false;
@@ -425,14 +492,15 @@ public class CanvasView extends View {
         return selectedNote;
     }
 
-    private boolean isClickOnSelectNote(float clickX, float clickY) {
+    private NoteOnDisplay isClickOnSelectNote(float clickX, float clickY) {
         int boardStartX = GameConstants.middleCstartX;
         int boardStartY = GameConstants.middleCstartY;
 
         // Check both notes here
-        for (int i = 0; i < this.currentNotes.size(); i++) {
-            NoteOnDisplay note = currentNotes.get(i);
-            if (note.getTick() == this.currentTick) {
+        for (int i = 0; i < this.songNotes.size(); i++) {
+            NoteOnDisplay note = songNotes.get(i);
+            if (note.getTick() < this.currentTick + this.noteSelectRangeError
+                    && note.getTick() > this.currentTick - this.noteSelectRangeError) {
                 if (note.isSharp) {
                     float startX = boardStartX + (50 - 12.5f) + note.noteDelta * GameConstants.white_key_width;
                     float startY = boardStartY;
@@ -440,7 +508,7 @@ public class CanvasView extends View {
                     float endY = boardStartY + GameConstants.black_key_height;
 
                     if (startX < clickX && clickX < endX && startY < clickY && clickY < endY) {
-                        return true;
+                        return note;
                     }
                 } else {
                     float startX = boardStartX + note.noteDelta * GameConstants.white_key_width;
@@ -449,13 +517,13 @@ public class CanvasView extends View {
                     float endY = boardStartY + GameConstants.white_key_height;
 
                     if (startX < clickX && clickX < endX && startY < clickY && clickY < endY) {
-                        return true;
+                        return note;
                     }
                 }
             }
         }
 
-        return false;
+        return null;
     }
 
   private void DrawBoundingBox(Canvas canvas) {
