@@ -28,7 +28,7 @@ public class CanvasView extends View {
     private Context context;
     private Paint mPaint;
     private float mX, mY;
-    private Scale scale = Scale.CMajor;
+    private Scale scale = Scale.DMajor;
     private NoteDisplaySystem system = NoteDisplaySystem.Staff;
     private static final float TOLERANCE = 5;
     private ArrayList<NoteOnDisplay> songNotes = new ArrayList<NoteOnDisplay>();
@@ -195,7 +195,7 @@ public class CanvasView extends View {
 
     private void CalNoteSpaces(Canvas canvas) {
         noteSpace = canvas.getWidth() - (GameConstants.lineSideMargins * 2) - GameConstants.clefWidth - (GameConstants.noteSideMargins * 2);
-        GameConstants.notesPerLine = (int) Math.ceil((double) noteSpace / GameConstants.spaceBetweenBeats);
+        GameConstants.notesPerLine = (int) Math.floor((double) noteSpace / GameConstants.spaceBetweenBeats);
         drawer.SetNotesPerLine(GameConstants.notesPerLine);
     }
 

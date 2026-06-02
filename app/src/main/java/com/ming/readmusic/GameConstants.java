@@ -6,14 +6,14 @@ public class GameConstants {
     public static int sharpWidth = 70;
     public static int clefWidth = 90;
     public static int noteSideMargins = 100;
-    public static int spaceBetweenBeats = 100;
+    public static int spaceBetweenBeats = 300;
     public static int spaceBetweenLines = 30;
     public static int spaceBetweenHalfNotes = spaceBetweenLines / 2;
     public static int noteSpace;
     public static int notesPerLine;
     public static int marginTop = 100;
     public static Clef clef = Clef.Treble;
-    public static int numOfNotes = 10; // TODO: Enough for one line?
+    public static int numOfNotes = 2; // TODO: Enough for one line?
     public static NoteMode noteMode = NoteMode.Note;
     public static int spaceBetweenClefs = 60;
     public static int middleCstartX = 800;
