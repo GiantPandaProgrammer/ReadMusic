@@ -195,9 +195,9 @@ public class Drawer {
             DrawShortLine(canvas, note, Xpos, Ypos);
         }
 
-        /* if (note.isSharp) {
+        if (note.isSharp) {
             DrawSharp(canvas, Xpos, Ypos);
-        } */
+        }
     }
 
     private void DrawNoteShape(Canvas canvas, int x, int y, int height, int width, TailDirection tailDirection, NoteColor color) {

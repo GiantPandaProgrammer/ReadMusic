@@ -37,7 +37,7 @@ public class CanvasView extends View {
     private Clef clef = Clef.Treble;
     private NoteMode noteMode = NoteMode.Note;
     private double currentTick = 0;
-    private NoteBundle numNotes = NoteBundle.Double;
+    private NoteBundle numNotes = NoteBundle.Single;
     private Drawer drawer;
     private boolean showHint = true;
     private boolean playSound = true;
