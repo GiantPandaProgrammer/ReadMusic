@@ -64,22 +64,7 @@ public class CanvasView extends View {
         mPaint.setStrokeJoin(Paint.Join.ROUND);
         mPaint.setStrokeWidth(4f);
 
-        if (useMIDI) {
-            InputStream stream;
-
-            try {
-                stream = getContext().getAssets().open("FUR_ELISE.mid");
-                MidiReader reader = new MidiReader(stream);
-                this.songNotes = reader.GetNoteDisplays(reader.GetNotes(), scale);
-
-            } catch(final Throwable tx) {
-
-            }
-        }
-        else {
-            this.songNotes = MidiReader.GenerateRandomNoteDisplays(GameConstants.numOfNotes, clef, numNotes, scale);
-        }
-
+        this.songNotes = MidiReader.GenerateRandomNoteDisplays(GameConstants.numOfNotes, clef, numNotes, scale);
         clef = Clef.Treble;
 
         this.allNotes = MidiReader.GetAllNotes(scale);
@@ -197,6 +182,27 @@ public class CanvasView extends View {
         noteSpace = canvas.getWidth() - (GameConstants.lineSideMargins * 2) - GameConstants.clefWidth - (GameConstants.noteSideMargins * 2);
         GameConstants.notesPerLine = (int) Math.floor((double) noteSpace / GameConstants.spaceBetweenBeats);
         drawer.SetNotesPerLine(GameConstants.notesPerLine);
+    }
+
+    public void SetSong(int SongId) {
+        SongStore store = new SongStore();
+        Song song = store.GetSong(SongId);
+
+        if (song == null) {
+            return;
+        }
+
+        InputStream stream;
+
+        try {
+            stream = getContext().getAssets().open(song.FileName);
+            MidiReader reader = new MidiReader(stream);
+            this.scale = song.Scale;
+            this.songNotes = reader.GetNoteDisplays(reader.GetNotes(), song.Scale);
+
+        } catch(final Throwable tx) {
+
+        }
     }
 
     public void SetTreble() {

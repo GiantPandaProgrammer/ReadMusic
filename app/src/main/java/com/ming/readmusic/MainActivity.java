@@ -20,13 +20,18 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Intent intent = getIntent();
-        int value = intent.getIntExtra("SongId", 0);
+        int songId = intent.getIntExtra("SongId", 0);
         //Toast.makeText(getApplicationContext(), "Press the correct key to move to the next note.", Toast.LENGTH_LONG).show();
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main2), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        if (songId != 0) {
+            CanvasView canvas = (CanvasView) findViewById(R.id.signature_canvas);
+            canvas.SetSong(songId);
+        }
     }
 
     @Override
