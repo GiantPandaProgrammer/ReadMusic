@@ -1,4 +1,4 @@
-package com.ming.readmusic;
+package com.ming.playmusic;
 
 import android.content.res.Resources;
 import android.graphics.Canvas;

@@ -27,7 +27,7 @@
         <FrameLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content">
-            <com.ming.readmusic.CanvasView
+            <com.ming.playmusic.CanvasView
                 android:id="@+id/signature_canvas"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

@@ -5,11 +5,11 @@ android {
 
 
     defaultConfig {
-        applicationId "com.ming.readmusic"
-        minSdk 36
+        applicationId "com.ming.playmusic"
+        minSdk 35
         targetSdk 36
-        versionCode 19
-        versionName "19.0"
+        versionCode 21
+        versionName "21.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -20,7 +20,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    namespace 'com.ming.readmusic'
+    namespace 'com.ming.playmusic'
 }
 
 dependencies {
@@ -32,6 +32,6 @@ dependencies {
     implementation 'androidx.activity:activity:1.12.4'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 
 }

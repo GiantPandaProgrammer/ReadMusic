@@ -1,4 +1,4 @@
-package com.ming.readmusic;
+package com.ming.playmusic;
 
 public class Song {
     public int Id;

@@ -1,4 +1,4 @@
-package com.ming.readmusic;
+package com.ming.playmusic;
 
 import com.leff.midi.MidiFile;
 import com.leff.midi.MidiTrack;

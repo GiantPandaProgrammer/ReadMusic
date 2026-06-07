@@ -1,4 +1,4 @@
-package com.ming.readmusic;
+package com.ming.playmusic;
 
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
@@ -366,6 +366,8 @@ public class CanvasView extends View {
 
         int action = event.getAction();
         //Log.i("extra pointer", Integer.toString(action));
+        int pointerIndex = event.getActionIndex();
+        int pointerId = event.getPointerId(pointerIndex);
 
         if (event.getAction() == MotionEvent.ACTION_UP) {
             return false;
@@ -373,8 +375,8 @@ public class CanvasView extends View {
 
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
 
-            float x = event.getX();
-            float y = event.getY();
+            float x = event.getX(pointerId);
+            float y = event.getY(pointerId);
 
             /*
             for (int i = 0; i < this.currentNotes.size(); i++) {
