@@ -373,7 +373,7 @@ public class CanvasView extends View {
             return false;
         }
 
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN || event.getAction() == MotionEvent.ACTION_POINTER_2_DOWN || event.getAction() == MotionEvent.ACTION_POINTER_3_DOWN) {
 
             float x = event.getX(pointerId);
             float y = event.getY(pointerId);
