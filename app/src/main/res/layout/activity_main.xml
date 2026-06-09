@@ -36,7 +36,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginTop="720px"
+                android:layout_marginTop="900px"
                 android:gravity="bottom|center_horizontal">
                <Button
                     android:layout_width="wrap_content"

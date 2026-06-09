@@ -11,15 +11,15 @@ public class GameConstants {
     public static int spaceBetweenHalfNotes = spaceBetweenLines / 2;
     public static int noteSpace;
     public static int notesPerLine;
-    public static int marginTop = 100;
+    public static int marginTop = 200;
     public static Clef clef = Clef.Treble;
     public static int numOfNotes = 6; // TODO: Enough for one line?
     public static NoteMode noteMode = NoteMode.Note;
     public static int spaceBetweenClefs = 60;
-    public static int middleCstartX = 800;
-    public static int middleCstartY = 500;
-    public static int white_key_width = 50;
-    public static int black_key_width = 25;
-    public static int white_key_height = 200;
-    public static int black_key_height = 130;
+    public static int middleCstartX = 950;
+    public static int middleCstartY = marginTop + 400;
+    public static int white_key_width = 62;
+    public static int black_key_width = 31;
+    public static int white_key_height = 250;
+    public static int black_key_height = 162;
 }

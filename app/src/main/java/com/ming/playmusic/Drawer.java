@@ -111,8 +111,7 @@ public class Drawer {
             if (i == 2 || i == 6) {
                 continue;
             }
-            canvas.drawRect(startX + (50 - 12.5f) +  i * GameConstants.white_key_width, startY, startX + (50 - 12.5f) + GameConstants.black_key_width + i * GameConstants.white_key_width, startY + GameConstants.black_key_height, bk);
-        }
+            canvas.drawRect(startX + (GameConstants.white_key_width - GameConstants.black_key_width / 2.0f) +  i * GameConstants.white_key_width, startY, startX + (GameConstants.white_key_width - GameConstants.black_key_width / 2.0f) + GameConstants.black_key_width + i * GameConstants.white_key_width, startY + GameConstants.black_key_height, bk);        }
     }
 
     public void DrawVerticalLine(Canvas canvas, double currentTick) {
