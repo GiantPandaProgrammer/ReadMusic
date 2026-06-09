@@ -11,7 +11,8 @@
         <activity
             android:name=".MainActivity2"
             android:exported="true"
-            android:screenOrientation="landscape">>
+            android:screenOrientation="landscape"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
