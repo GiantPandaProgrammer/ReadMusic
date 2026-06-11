@@ -1,9 +1,6 @@
 package com.ming.playmusic;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,7 +9,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
-public class MainActivity extends AppCompatActivity {
+public class SongActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +22,9 @@ public class MainActivity extends AppCompatActivity {
         if (songId != 0) {
             CanvasView canvas = (CanvasView) findViewById(R.id.signature_canvas);
             canvas.SetSong(songId);
+        } else {
+            Intent myIntent = new Intent(this, SongListActivity.class);
+            this.startActivity(myIntent);
         }
     }
 
@@ -53,11 +53,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void PlaySong(View view) {
         CanvasView canvas = (CanvasView) findViewById(R.id.signature_canvas);
-        canvas.PlaySong();
+        canvas.PlaySong(false);
     }
-    public void Refresh(View view) {
+    public void Listen(View view) {
         CanvasView canvas = (CanvasView) findViewById(R.id.signature_canvas);
-        canvas.Refresh();
+        canvas.PlaySong(true);
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

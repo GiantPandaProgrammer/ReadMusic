@@ -1,5 +1,7 @@
 package com.ming.playmusic;
 
+import android.util.Log;
+
 import com.leff.midi.MidiFile;
 import com.leff.midi.MidiTrack;
 import com.leff.midi.event.MidiEvent;
@@ -31,26 +33,29 @@ public class MidiReader {
 
         // 2. Do some editing to the file
         // 2a. Strip out anything but notes from track 1
-        MidiTrack T = mf.getTracks().get(0);
-
-        // It's a bad idea to modify a set while iterating, so we'll collect
-        // the events first, then remove them afterwards
-        Iterator<MidiEvent> it = T.getEvents().iterator();
-        //ArrayList<Long> ticks = new ArrayList<Long>();
-        //ArrayList<Double> beats = new ArrayList<Double>();
-
         notes = new ArrayList<NoteOn>();
 
-        while (it.hasNext()) {
-            MidiEvent E = it.next();
+        for (int i = 0; i < mf.getTrackCount(); i++) {
 
-            if (E.getClass().equals(NoteOn.class)) {
-                NoteOn note = (NoteOn) E;
-                if (note.getVelocity() != 0) {
-                    notes.add(note);
+            MidiTrack T = mf.getTracks().get(i);
+
+            // It's a bad idea to modify a set while iterating, so we'll collect
+            // the events first, then remove them afterwards
+            Iterator<MidiEvent> it = T.getEvents().iterator();
+            //ArrayList<Long> ticks = new ArrayList<Long>();
+            //ArrayList<Double> beats = new ArrayList<Double>();
+
+            while (it.hasNext()) {
+                MidiEvent E = it.next();
+
+                if (E.getClass().equals(NoteOn.class)) {
+                    NoteOn note = (NoteOn) E;
+                    if (note.getVelocity() != 0) {
+                        notes.add(note);
+                    }
+                    //beats.add((double) (note.getTick() / 480));
+                    //notes.add(note.getNoteValue());
                 }
-                //beats.add((double) (note.getTick() / 480));
-                //notes.add(note.getNoteValue());
             }
         }
     }
@@ -184,6 +189,7 @@ public class MidiReader {
             case 95: //B6
                 return new NoteOnDisplay(20, false, "B", 6, scaleKey);
             default:
+                Log.d("Missing Note", Integer.toString(note.getNoteValue()));
                 return new NoteOnDisplay(0, false, "", 0, scaleKey);
         }
     }

@@ -94,7 +94,22 @@ public class CanvasView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
+        if (this.isListening) {
+            ArrayList<NoteOnDisplay> playNotes = new ArrayList<NoteOnDisplay>();
+            for (int i = 0; i < songNotes.size(); i++) {
+                NoteOnDisplay note = songNotes.get(i);
+                if (note.getTick() >= currentTick && note.getTick() < currentTick + GameConstants.tick_interval) {
+                    playNotes.add(note);
+                }
+            }
+
+            for (int i = 0; i < playNotes.size(); i++) {
+                PlayNote(playNotes.get(i));
+            }
+        }
+
         int numClef = 1; //GetNumClefs(canvas);
+
 
         if (system == NoteDisplaySystem.Staff) {
             for (int i = 0; i < numClef; i++) {
@@ -284,22 +299,26 @@ public class CanvasView extends View {
         }
         return lastTick;
     }
-    public void PlaySong() {
+    private boolean isListening = false;
+    public void PlaySong(boolean isListen) {
 
         if (isPlaying) {
             return;
         }
+
+        this.isListening = isListen;
 
         this.BlackAllNotes();
         handler = new Handler();
 
         final Runnable r = new Runnable() {
             public void run() {
-                currentTick = currentTick + 24;
+                currentTick = currentTick + GameConstants.tick_interval;
 
                 if (currentTick > GetLastTick()) {
                     currentTick = 0;
                     isPlaying = false;
+                    isListening = false;
                 } else {
                     handler.postDelayed(this, 100);
                 }
@@ -335,16 +354,13 @@ public class CanvasView extends View {
     public boolean isPressed = false;
 
     public void PlayNote(NoteOnDisplay note) {
-        if (note.isSharp)
-        {
-            Log.d("sharp", "sharp");
-        }
         String fileName = "piano_sounds/" + note.getNoteFileName() + ".ogg";
-        Log.d("file name", fileName);
+        //Log.d("Media Player 0", fileName);
         AssetFileDescriptor afd = null;
         try {
             afd = context.getAssets().openFd(fileName);
         } catch (IOException e) {
+            Log.d("Media Player 1", fileName);
             e.printStackTrace();
         }
 
@@ -354,6 +370,12 @@ public class CanvasView extends View {
             player.setDataSource(afd.getFileDescriptor(),afd.getStartOffset(),afd.getLength());
             player.prepare();
             player.start();
+            player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mp) {
+                    mp.release(); // Safely releases system resources
+                }
+            });
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -363,6 +385,9 @@ public class CanvasView extends View {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
+        if (this.isListening) {
+            return true;
+        }
 
         int action = event.getAction();
         //Log.i("extra pointer", Integer.toString(action));

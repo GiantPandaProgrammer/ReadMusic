@@ -22,4 +22,5 @@ public class GameConstants {
     public static int black_key_width = 31;
     public static int white_key_height = 250;
     public static int black_key_height = 162;
+    public static int tick_interval = 24;
 }

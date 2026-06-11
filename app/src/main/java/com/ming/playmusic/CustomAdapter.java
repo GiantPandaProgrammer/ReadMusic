@@ -63,7 +63,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
         viewHolder.getTextView().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent myIntent = new Intent(context, MainActivity.class);
+                Intent myIntent = new Intent(context, SongActivity.class);
                 myIntent.putExtra("SongId", localDataSet.get(viewHolder.getAdapterPosition()).Id); //Optional parameters
                 context.startActivity(myIntent);
             }
