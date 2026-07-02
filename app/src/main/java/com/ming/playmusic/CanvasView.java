@@ -162,9 +162,7 @@ public class CanvasView extends View {
 
         DrawSelectedNote(canvas);
 
-        clickedNoteDictionary.forEach((key, value) -> {
-            drawer.DrawSelectedKeyboardNote(canvas, value, false);
-        });
+
     }
 
     private void DrawSelectedNote(Canvas canvas) {
@@ -177,6 +175,11 @@ public class CanvasView extends View {
             }
         }
 
+        clickedNoteDictionary.forEach((key, note) -> {
+            if (!drawer.isBlackNote(note))
+                drawer.DrawSelectedKeyboardNote(canvas, note, false);
+        });
+
         drawer.DrawKeyboard(canvas);
 
         if (showHint && currentSelected.size() > 0)
@@ -187,6 +190,11 @@ public class CanvasView extends View {
                 }
             }
         }
+
+        clickedNoteDictionary.forEach((key, note) -> {
+            if (drawer.isBlackNote(note))
+                drawer.DrawSelectedKeyboardNote(canvas, note, false);
+        });
     }
     // Gets the line number?
     private int GetNumClefs(Canvas canvas) {
@@ -395,10 +403,10 @@ public class CanvasView extends View {
         int pointerIndex = event.getActionIndex();
         int pointerId = event.getPointerId(pointerIndex);
 
-        if (event.getAction() == MotionEvent.ACTION_UP) {
+        /*if (event.getAction() == MotionEvent.ACTION_UP) {
             clickedNoteDictionary.remove(pointerIndex);
             return false;
-        }
+        }*/
 
         if (event.getAction() == MotionEvent.ACTION_DOWN || event.getAction() == MotionEvent.ACTION_POINTER_2_DOWN || event.getAction() == MotionEvent.ACTION_POINTER_3_DOWN) {
 
@@ -428,6 +436,16 @@ public class CanvasView extends View {
 
                 NoteOnDisplay clickedNote = getNoteClickedOn(x, y);
                 clickedNoteDictionary.put(pointerIndex, clickedNote);
+                new java.util.Timer().schedule(
+                        new java.util.TimerTask() {
+                            @Override
+                            public void run() {
+                                clickedNoteDictionary.remove(pointerIndex);
+                            }
+                        },
+                        1000
+                );
+
                 if (clickedNote != null)
                 {
                     Log.d("clicked on ", clickedNote.letter);
