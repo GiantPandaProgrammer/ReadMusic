@@ -24,21 +24,28 @@ public class Drawer {
         this.notesPerLine = notesPerLine;
     }
 
-    public void DrawSelectedKeyboardNote(Canvas canvas, NoteOnDisplay selected) {
+    public void DrawSelectedKeyboardNote(Canvas canvas, NoteOnDisplay selected, boolean isRed) {
 
         int startX = GameConstants.middleCstartX;
         int startY = GameConstants.middleCstartY;
 
         Paint red = new Paint();
-        red.setColor(Color.RED);
-        red.setStyle(Paint.Style.FILL);
+        if (isRed)
+        {
+            red.setColor(Color.RED);
+            red.setStyle(Paint.Style.FILL);
+        } else {
+            red.setColor(Color.YELLOW);
+            red.setStyle(Paint.Style.FILL);
+        }
+
         red.setStrokeWidth(5f);
 
         if (selected.isSharp) {
 
             if (isBlackNote(selected))
             {
-                canvas.drawRect(startX + (50 - 12.5f) +  selected.noteDelta * GameConstants.white_key_width, startY, startX + (50 - 12.5f) + GameConstants.black_key_width + selected.noteDelta * GameConstants.white_key_width, startY + GameConstants.black_key_height, red);
+                canvas.drawRect(startX + (GameConstants.white_key_width - GameConstants.black_key_width / 2.0f) +  selected.noteDelta * GameConstants.white_key_width, startY, startX + (GameConstants.white_key_width - GameConstants.black_key_width / 2.0f) + GameConstants.black_key_width + selected.noteDelta * GameConstants.white_key_width, startY + GameConstants.black_key_height, red);
             }
             else
             {

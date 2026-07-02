@@ -17,6 +17,9 @@ import android.view.View;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Dictionary;
+import java.util.HashMap;
+import java.util.Map;
 
 // cmd + [ and cmd + ]  go back and forth in code
 
@@ -110,7 +113,6 @@ public class CanvasView extends View {
 
         int numClef = 1; //GetNumClefs(canvas);
 
-
         if (system == NoteDisplaySystem.Staff) {
             for (int i = 0; i < numClef; i++) {
                 drawer.DrawClefsAndLines(i, clef, canvas, getResources(), this.scale);
@@ -159,6 +161,10 @@ public class CanvasView extends View {
         currentSelected = newSelected;
 
         DrawSelectedNote(canvas);
+
+        clickedNoteDictionary.forEach((key, value) -> {
+            drawer.DrawSelectedKeyboardNote(canvas, value, false);
+        });
     }
 
     private void DrawSelectedNote(Canvas canvas) {
@@ -166,7 +172,7 @@ public class CanvasView extends View {
         {
             for (NoteOnDisplay note : currentSelected) {
                 if (!drawer.isBlackNote(note)) {
-                    drawer.DrawSelectedKeyboardNote(canvas, note);
+                    drawer.DrawSelectedKeyboardNote(canvas, note, true);
                 }
             }
         }
@@ -177,7 +183,7 @@ public class CanvasView extends View {
         {
             for (NoteOnDisplay note : currentSelected) {
                 if (drawer.isBlackNote(note)) {
-                    drawer.DrawSelectedKeyboardNote(canvas, note);
+                    drawer.DrawSelectedKeyboardNote(canvas, note, true);
                 }
             }
         }
@@ -232,11 +238,6 @@ public class CanvasView extends View {
 
     public void SetBoth() {
         clef = Clef.Both;
-        this.Refresh();
-    }
-
-    public void SetSingle() {
-        numNotes = NoteBundle.Single;
         this.Refresh();
     }
 
@@ -380,7 +381,7 @@ public class CanvasView extends View {
             e.printStackTrace();
         }
     }
-
+    Map<Integer, NoteOnDisplay> clickedNoteDictionary = new HashMap<>();
     // Check if the note selected is the correct note. And move onto next note.
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -395,6 +396,7 @@ public class CanvasView extends View {
         int pointerId = event.getPointerId(pointerIndex);
 
         if (event.getAction() == MotionEvent.ACTION_UP) {
+            clickedNoteDictionary.remove(pointerIndex);
             return false;
         }
 
@@ -425,6 +427,7 @@ public class CanvasView extends View {
             if (isClickOnKeyboard(x, y)) {
 
                 NoteOnDisplay clickedNote = getNoteClickedOn(x, y);
+                clickedNoteDictionary.put(pointerIndex, clickedNote);
                 if (clickedNote != null)
                 {
                     Log.d("clicked on ", clickedNote.letter);
